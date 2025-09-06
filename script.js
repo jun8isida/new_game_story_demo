@@ -1,157 +1,260 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // HTML要素の取得
+    // DOM要素の取得
+    const titleScreen = document.getElementById('title-screen');
+    const gameScreen = document.getElementById('game-screen');
+    const debateScreen = document.getElementById('debate-screen');
+    const startButton = document.getElementById('start-button');
+
     const backgroundLayer = document.getElementById('background-layer');
-    const characterImage = document.getElementById('character-image');
-    const characterName = document.getElementById('character-name');
-    const dialogueText = document.getElementById('dialogue-text');
-    const chapterTitleLayer = document.getElementById('chapter-title-layer');
-    const chapterTitle = document.getElementById('chapter-title');
-    
-    // ストーリーデータ
-    const story = [
-        { type: 'narration', text: '―笑顔の裏に潜む、むき出しの悪意。' },
-        { type: 'narration', text: 'これはもう、遊びやイタズラなんかじゃない。' },
-        { type: 'background', image: 'images/bg_classroom_day.jpg' },
-        { type: 'narration', text: '午前の教室。まだ朝の光は白く、窓から差し込む風は静かだった。' },
-        { type: 'narration', text: '僕は転校生として新しい席に腰を下ろす。' },
-        { type: 'narration', text: 'ほんの少しだけ胸を膨ませて、「今日から僕の新しい日常が始まるのだ」と思い込もうとしていた。' },
-        { type: 'narration', text: 'だが、そこにあったのは――' },
-        { type: 'narration', text: '机に深く刻み込まれた、たった二文字。' },
-        { type: 'narration', text: '“死ね”', flash: true }, // フラッシュ演出の例
-        { type: 'narration', text: '硬い木材に残された線は、誰かの震える手が残したものではなかった。' },
-        { type: 'narration', text: '強く、繰り返し、何度も押し込むように刻まれた傷跡。' },
-        { type: 'narration', text: 'その文字の底には、ただの衝動ではなく、冷たい悪意が染み込んでいるように思えた。' },
-        { type: 'background', image: 'images/bg_corridor.jpg' },
-        { type: 'narration', text: '息を呑んだ僕の耳に、廊下のざわめきが飛び込んでくる。' },
-        { type: 'narration', text: '駆け寄ると、生徒用ロッカーが荒らされていた。' },
-        { type: 'narration', text: '制服、教科書、化粧ポーチ……生活の破片が床に散らばっている。' },
-        { type: 'narration', text: 'その中で、ひときわ目を引くもの。' },
-        { type: 'narration', text: '誰かの下着が、わざと晒すように天井の蛍光灯の下に置かれていた。' },
-        { type: 'narration', text: '羞恥を狙った、露骨で下劣な仕打ち。' },
-        { type: 'narration', text: 'ただのイタズラではない。――これは、誰かを「壊すための意思」だ。' },
-        { type: 'background', image: 'images/bg_classroom_day.jpg' },
-        { type: 'narration', text: '教室に戻ると、友人たちの視線が交錯する。' },
-        { type: 'narration', text: '笑う者も、怯える者も、沈黙する者もいた。' },
-        { type: 'narration', text: 'だが、その誰もが口を開かず、まるで「見てはいけないもの」として処理しようとしていた。' },
-        { type: 'narration', text: '僕は思った。この学園には、目に見えない「声」が渦巻いている。' },
-        { type: 'narration', text: '机に刻まれた刃のような言葉。廊下に撒き散らされた生活の断片。' },
-        { type: 'narration', text: 'そのすべてが、誰かの心を切り裂き、生きる居場所を奪おうとしている。' },
-        { type: 'narration', text: '胸の奥で冷たい感情が芽生える。' },
-        { type: 'narration', text: '――これは始まりにすぎない。' },
-        { type: 'narration', text: '――これから僕は、醜く汚い人間の憎悪と、正面から戦っていくことになるのだ。' },
-        { type: 'narration', text: '窓の外で、曇った太陽がほんの少し揺らいだ。その光さえも、どこか嘲笑しているように見えた。' },
-        
-        // Day 1
-        { type: 'chapter', title: 'Day1<br>炎の痕' },
-        { type: 'background', image: 'images/bg_shoebox_burnt.jpg' },
-        { type: 'narration', text: '朝、ホームルームが始まる前。廊下に甲高い悲鳴が響き渡った。' },
-        { type: 'narration', text: '心臓を掴まれたように胸が跳ね、僕らは声のする方へ駆け出す。' },
-        { type: 'narration', text: 'そこにあったのは、焼け焦げた靴箱だった。' },
-        { type: 'narration', text: '木材は黒く炭のようになり、ひしゃげた金具からはまだ熱が残っている。' },
-        { type: 'narration', text: '中に入っていた上履きは、片方が真っ黒に焦げ、もう片方は辛うじて形を保っていた。' },
-        { type: 'narration', text: 'だが漂うオイルの匂いが、これが自然発火ではなく、“誰かが意図的に仕組んだ火”であることを告げていた。' },
-        // ▼▼▼ 変更点 ▼▼▼
-        { type: 'character', name: '葵', image: 'https://placehold.co/400x800/ff00ff/1a1a1a?text=Aoi' },
-        { type: 'dialogue', name: '葵', text: 'だ、誰か……！　見てっ！' },
-        { type: 'character', name: '理子', image: 'https://placehold.co/400x800/ff00ff/1a1a1a?text=Riko' },
-        // ▲▲▲ 変更点 ▲▲▲
-        { type: 'dialogue', name: '理子', text: '……これは“イタズラ”の域を超えている。放火未遂よ。' },
-        { type: 'character', name: 'none' }, // キャラクターを消す
-        { type: 'narration', text: 'クラスメイトたちは口々にざわめく。「危なかったらどうするんだよ」「誰の靴だった？」「先生には言うべきだ」' },
-        { type: 'narration', text: 'だが、その声には妙な温度差があった。怯える者。苛立つ者。一方で、目を逸らし、関わりたくないと距離を取る者。' },
-        { type: 'narration', text: 'まるで火を放った“誰か”が、この場に混ざっていることを、全員が心の奥で薄々感じているかのように。' },
-        { type: 'narration', text: '僕の背筋を冷たい汗が伝った。犯人の姿は見えない。' },
-        { type: 'narration', text: 'だが、その気配は確実にここに存在している。影は形を持たず、教室の空気に溶け込んでいる。' },
-        { type: 'narration', text: '誰の瞳が嘘を隠しているのか――判別できないまま、僕はひたすらに周囲の気配を探ろうとした。' },
-        { type: 'narration', text: '炎の痕跡は、ただの警告ではない。「次は人を焼く」という意思表示のように思えた。' },
-        { type: 'narration', text: '――悪意は確実にエスカレートしている。次に狙われるのは、僕か、それとも隣に立つ誰かか。' },
-        { type: 'narration', text: '窓の外で、曇天に隠れた太陽がぼんやりと揺れていた。まるでそれすらも、静かに見下ろし、笑っているかのように。' },
-        { type: 'narration', text: '（クリックで最初に戻ります）' },
+    const charLeft = document.getElementById('char-left');
+    const charCenter = document.getElementById('char-center');
+    const charRight = document.getElementById('char-right');
+    const charName = document.getElementById('char-name');
+    const message = document.getElementById('message');
+    const textbox = document.getElementById('textbox');
+    const choicesBox = document.getElementById('choices-box');
+
+    // 論破パートの要素
+    const debateStatement = document.getElementById('debate-statement');
+    const evidenceList = document.getElementById('evidence-list');
+    const breakAnimation = document.getElementById('break-animation');
+
+    // キャラクター定義
+    const characters = {
+        aoi: { name: '葵', image: 'images/char_aoi.png' },
+        hayato: { name: '隼人', image: 'images/char_hayato.png' },
+        haruto: { name: '陽翔', image: 'images/char_haruto.png' },
+        riko: { name: '理子', image: 'images/char_riko.png' },
+        mio: { name: '澪', image: 'images/char_mio.png' },
+        miu: { name: '美羽', image: 'images/char_miu.png' },
+        player: { name: 'あなた', image: 'images/char_silhouette.png' },
+        unknown: { name: '？？？', image: 'images/char_silhouette.png' },
+    };
+
+    // シナリオデータ
+    const scenario = [
+        { type: 'scene', background: 'images/bg_classroom.jpg', text: '（転校してきて数週間。新しい生活にも少しずつ慣れてきた頃だった）' },
+        { char: 'aoi', pos: 'center', text: 'ねえ、聞いた？ またあったんだって。嫌がらせ。' },
+        { char: 'hayato', pos: 'left', text: 'ああ、今度は美羽の教科書が破られてたって話だろ？ マジで胸糞悪いぜ。' },
+        { char: 'riko', pos: 'right', text: 'これで3件目ね。SNSでの悪口、掲示物の改ざん、そして私物への攻撃…だんだんエスカレートしているわ。' },
+        { char: 'miu', pos: 'center', text: 'うぅ…なんで私がこんな目に…っ。', emotion: 'sad' },
+        { char: 'player', text: '（またか…。このクラス、どこかおかしい）' },
+        {
+            type: 'choice',
+            question: '美羽にどう声をかける？',
+            choices: [
+                { text: '「大丈夫？」と心配する', next: 'choice_kind' },
+                { text: '「犯人の心当たりは？」と聞く', next: 'choice_suspect' },
+                { text: '黙って様子を見る', next: 'choice_observe' },
+            ]
+        },
+        // --- 選択肢分岐 ---
+        { label: 'choice_kind', char: 'miu', text: '…ありがとう。でも、誰がやったのか分からなくて、怖くて…。' },
+        { char: 'aoi', text: '大丈夫だよ美羽ちゃん！ みんながついてるから！', next: 'common_route' },
+
+        { label: 'choice_suspect', char: 'miu', text: 'えっ…？ わ、分からないよ…。私が誰かに恨まれるなんて…。' },
+        { char: 'riko', text: '…直接的すぎるわね。でも、確かに情報は必要よ。', next: 'common_route' },
+
+        { label: 'choice_observe', char: 'player', text: '（今は下手に動くべきじゃない。まずは状況を整理しよう）' },
+        { char: 'hayato', text: 'おい、何とか言えよ！ お前もこのクラスの一員だろ！', next: 'common_route' },
+
+        // --- 共通ルート ---
+        { label: 'common_route', char: 'haruto', pos: 'right', text: '騒いでも解決しない。犯人は巧妙に証拠を残していない。…冷静になるべきだ。' },
+        { char: 'mio', pos: 'left', text: 'フン、優等生のご高説ね。でも、犯人はこの中にいる…。そう思うだけでゾクゾクしない？' },
+        { char: 'player', text: '（この日から、僕たちの日常は歪な謎に侵食されていった…）' },
+        { type: 'debate',
+          statement: "昨日の放課後、<span class='contradiction' data-evidence='alibi'>誰も教室には残っていなかった</span>はずよ。だから、犯行は今朝早くに行われたに違いないわ。",
+          evidence: [
+              { id: 'alibi', name: '隼人のアリバイ' },
+              { id: 'message', name: '澪のメッセージ' },
+          ],
+          correctEvidence: 'alibi'
+        },
+        { type: 'scene', text: '（議論は、まだ始まったばかりだ…）', next: 'end' }
     ];
 
-    let storyIndex = -1;
-    let isTyping = false;
-    let typingTimeout;
-
-    // テキストを1文字ずつ表示する関数
-    function typeWriter(text, callback) {
-        isTyping = true;
-        let i = 0;
-        dialogueText.innerHTML = '';
-        function typing() {
-            if (i < text.length) {
-                dialogueText.innerHTML += text.charAt(i);
-                i++;
-                typingTimeout = setTimeout(typing, 50); // 文字の表示速度
-            } else {
-                isTyping = false;
-                if(callback) callback();
-            }
+    let currentScene = 0;
+    let gameState = {
+        evidence: ['隼人のアリバイ', '澪のメッセージ'], // 所持している証拠
+    };
+    
+    // ゲームの状態管理
+    function updateScene() {
+        const scene = scenario[currentScene];
+        
+        // シーンタイプに応じて処理を分岐
+        switch(scene.type) {
+            case 'choice':
+                displayChoices(scene);
+                break;
+            case 'debate':
+                startDebate(scene);
+                break;
+            default:
+                displayScene(scene);
+                break;
         }
-        typing();
+    }
+
+    // 通常のシーンを表示
+    function displayScene(scene) {
+        choicesBox.style.display = 'none'; // 選択肢を隠す
+
+        // 背景設定
+        if (scene.background) {
+            backgroundLayer.style.backgroundImage = `url(${scene.background})`;
+        }
+
+        // キャラクター表示
+        [charLeft, charCenter, charRight].forEach(c => {
+            c.src = '';
+            c.classList.remove('active');
+        });
+
+        if (scene.char) {
+            const charData = characters[scene.char];
+            charName.textContent = charData.name;
+            charName.style.display = 'inline-block';
+
+            let targetCharImg;
+            if (scene.pos === 'left') targetCharImg = charLeft;
+            else if (scene.pos === 'right') targetCharImg = charRight;
+            else targetCharImg = charCenter;
+            
+            targetCharImg.src = charData.image;
+            targetCharImg.classList.add('active');
+        } else {
+            charName.style.display = 'none';
+        }
+        
+        // テキスト表示
+        message.textContent = scene.text;
+    }
+
+    // 選択肢を表示
+    function displayChoices(scene) {
+        message.textContent = scene.question;
+        choicesBox.innerHTML = ''; // 既存の選択肢をクリア
+        choicesBox.style.display = 'flex';
+        scene.choices.forEach(choice => {
+            const button = document.createElement('button');
+            button.className = 'choice-button';
+            button.textContent = choice.text;
+            button.onclick = () => {
+                currentScene = findSceneIndex(choice.next);
+                updateScene();
+            };
+            choicesBox.appendChild(button);
+        });
+    }
+
+    // 論破パートを開始
+    function startDebate(scene) {
+        showScreen(debateScreen);
+        debateStatement.innerHTML = scene.statement;
+        evidenceList.innerHTML = '';
+
+        // 所持している証拠品を表示
+        gameState.evidence.forEach(evi => {
+            const item = document.createElement('div');
+            item.className = 'evidence-item';
+            item.textContent = evi;
+            item.dataset.id = evi.includes('アリバイ') ? 'alibi' : 'message'; // 簡易的なID付け
+            item.onclick = () => {
+                // 証拠品選択のロジック
+                document.querySelectorAll('.evidence-item').forEach(el => el.classList.remove('selected'));
+                item.classList.add('selected');
+            };
+            evidenceList.appendChild(item);
+        });
+        
+        // 矛盾点クリックのイベント
+        document.querySelector('.contradiction').onclick = (e) => {
+            const selectedEvidence = document.querySelector('.evidence-item.selected');
+            if (!selectedEvidence) {
+                alert('証拠品を選択してください！');
+                return;
+            }
+
+            if (selectedEvidence.dataset.id === e.target.dataset.evidence) {
+                // 正解
+                showBreakAnimation(() => {
+                    showScreen(gameScreen);
+                    // 成功したら次のシーンへ
+                    currentScene++;
+                    updateScene();
+                });
+            } else {
+                // 不正解
+                alert('違う！その証拠では矛盾を突けない！');
+            }
+        };
+    }
+
+    // BREAK!アニメーション
+    function showBreakAnimation(callback) {
+        breakAnimation.style.display = 'flex';
+        setTimeout(() => {
+            breakAnimation.style.display = 'none';
+            if (callback) callback();
+        }, 1500); // アニメーション時間 + 余裕
+    }
+
+    // ラベル名からシナリオのインデックスを探す
+    function findSceneIndex(label) {
+        return scenario.findIndex(scene => scene.label === label);
     }
     
-    // 次のストーリーを表示する関数
-    function displayNextScene() {
-        // タイピング中なら、一気に全文表示する
-        if (isTyping) {
-            clearTimeout(typingTimeout);
-            isTyping = false;
-            const currentScene = story[storyIndex];
-            dialogueText.innerHTML = currentScene.text;
-            return;
+    // 次のシーンへ進めるための関数
+    function next() {
+        const currentSceneData = scenario[currentScene];
+
+        // 現在のシーンに 'next' プロパティがあるか確認
+        if (currentSceneData && currentSceneData.next) {
+            if (currentSceneData.next === 'end') {
+                alert('GAME CLEAR (Prototype)');
+                showScreen(titleScreen);
+                currentScene = 0;
+                return;
+            }
+            // ラベルが指定されている場合、そのシーンにジャンプ
+            currentScene = findSceneIndex(currentSceneData.next);
+        } else {
+            // 'next' プロパティがなければ、次のインデックスに進む
+            currentScene++;
         }
 
-        storyIndex++;
-        if (storyIndex >= story.length) {
-            storyIndex = 0; // 最後まで行ったら最初に戻る（ループ）
-        }
-
-        const currentScene = story[storyIndex];
-
-        // タイプによって処理を分岐
-        switch (currentScene.type) {
-            case 'narration':
-                characterName.style.display = 'none';
-                // キャラクターが表示されている場合、非表示にする
-                if (characterImage.style.opacity === '1') {
-                    characterImage.style.opacity = '0';
-                }
-                typeWriter(currentScene.text);
-                break;
-            case 'dialogue':
-                characterName.style.display = 'block';
-                characterName.textContent = currentScene.name;
-                typeWriter(currentScene.text);
-                break;
-            case 'background':
-                backgroundLayer.style.backgroundImage = `url(${currentScene.image})`;
-                displayNextScene(); // 背景変更後、すぐに次のシーンへ
-                break;
-            case 'character':
-                if (currentScene.name === 'none') {
-                    characterImage.style.opacity = '0';
-                } else {
-                    characterImage.src = currentScene.image;
-                    characterImage.style.opacity = '1';
-                }
-                displayNextScene(); // キャラ表示後、すぐに次のシーンへ
-                break;
-            case 'chapter':
-                chapterTitle.innerHTML = currentScene.title;
-                chapterTitle.dataset.text = chapterTitle.textContent;
-                chapterTitleLayer.classList.add('show-chapter-title');
-                setTimeout(() => {
-                    chapterTitleLayer.classList.remove('show-chapter-title');
-                    displayNextScene();
-                }, 3000); // 3秒間タイトルを表示
-                break;
+        // シナリオの範囲内かチェック
+        if (currentScene < scenario.length) {
+            updateScene();
+        } else {
+            // シナリオの終端に達した場合
+            alert('GAME CLEAR (Prototype)');
+            showScreen(titleScreen);
+            currentScene = 0;
         }
     }
+    
+    // スクリーン切り替え
+    function showScreen(screen) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        screen.classList.add('active');
+    }
 
-    // クリックイベントでストーリーを進行
-    document.body.addEventListener('click', displayNextScene);
+    // イベントリスナー
+    startButton.addEventListener('click', () => {
+        showScreen(gameScreen);
+        currentScene = 0;
+        updateScene();
+    });
+    
+    textbox.addEventListener('click', () => {
+        // 選択肢や論破パートが表示されている間はクリックで進まない
+        if (choicesBox.style.display === 'none' && !debateScreen.classList.contains('active')) {
+            next();
+        }
+    });
 
-    // ゲーム開始
-    displayNextScene();
+    // 初期化
+    showScreen(titleScreen);
 });
