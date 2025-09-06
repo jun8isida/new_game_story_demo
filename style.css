@@ -1,15 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700&family=Oswald:wght@700&display=swap');
 
 :root {
-    --main-bg-color: #1a1a1a;
-    --main-text-color: #ffffff;
-    --accent-color: #ff00ff; /* ショッキングピンク */
-    --ui-bg-color: rgba(0, 0, 0, 0.8);
+    --main-bg: #1a1a1a;
+    --main-text: #ffffff;
+    --accent-pink: #ff00ff;
+    --accent-cyan: #00ffff;
+    --ui-bg: rgba(0, 0, 0, 0.7);
+    --border-color: var(--accent-pink);
 }
 
 body {
-    background-color: var(--main-bg-color);
-    color: var(--main-text-color);
+    background-color: var(--main-bg);
+    color: var(--main-text);
     font-family: 'Noto Sans JP', sans-serif;
     margin: 0;
     overflow: hidden;
@@ -20,140 +22,263 @@ body {
 }
 
 #game-container {
-    width: 1024px;
-    height: 576px;
+    width: 100%;
+    max-width: 1024px;
+    height: 100%;
+    max-height: 768px;
+    background-color: #000;
+    border: 2px solid var(--border-color);
     position: relative;
-    background-color: black;
-    overflow: hidden;
-    outline: 2px solid var(--accent-color);
-    box-shadow: 0 0 20px var(--accent-color);
+    box-shadow: 0 0 20px var(--accent-pink);
 }
 
-/* --- レイヤー設定 --- */
-#background-layer, #character-layer, #chapter-title-layer {
+.screen {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.screen.active {
+    display: flex;
+}
+
+/* タイトル画面 */
+#title-screen {
+    background: #000;
+    cursor: pointer;
+}
+
+#start-button {
+    font-family: 'Oswald', sans-serif;
+    font-size: 2rem;
+    background: transparent;
+    border: 3px solid var(--accent-pink);
+    color: var(--accent-pink);
+    padding: 15px 40px;
+    margin-top: 50px;
+    cursor: pointer;
+    transform: skewX(-15deg);
+    transition: all 0.3s ease;
+    letter-spacing: 2px;
+}
+
+#start-button:hover {
+    background: var(--accent-pink);
+    color: #000;
+    box-shadow: 0 0 25px var(--accent-pink);
+}
+
+/* グリッチエフェクト */
+.glitch {
+    font-family: 'Oswald', sans-serif;
+    font-size: 4rem;
+    position: relative;
+    color: var(--main-text);
+    text-shadow: 0 0 5px var(--accent-cyan);
+}
+.glitch::before, .glitch::after {
+    content: attr(data-text);
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+    background: #000;
+    overflow: hidden;
+}
+.glitch::before {
+    left: 2px;
+    text-shadow: -2px 0 var(--accent-pink);
+    animation: glitch-anim-1 2s infinite linear alternate-reverse;
+}
+.glitch::after {
+    left: -2px;
+    text-shadow: -2px 0 var(--accent-cyan);
+    animation: glitch-anim-2 2s infinite linear alternate-reverse;
+}
+@keyframes glitch-anim-1 {
+    0% { clip-path: inset(15% 0 86% 0); } 25% { clip-path: inset(50% 0 23% 0); } 50% { clip-path: inset(25% 0 5% 0); } 75% { clip-path: inset(62% 0 35% 0); } 100% { clip-path: inset(42% 0 53% 0); }
+}
+@keyframes glitch-anim-2 {
+    0% { clip-path: inset(80% 0 3% 0); } 25% { clip-path: inset(13% 0 60% 0); } 50% { clip-path: inset(95% 0 2% 0); } 75% { clip-path: inset(34% 0 45% 0); } 100% { clip-path: inset(70% 0 20% 0); }
 }
 
+
+/* ゲーム本編 */
 #background-layer {
+    width: 100%;
+    height: 100%;
+    position: absolute;
     background-size: cover;
     background-position: center;
-    transition: background-image 0.5s ease-in-out;
+    z-index: 1;
 }
 
 #character-layer {
+    width: 100%;
+    height: 100%;
+    position: absolute;
     display: flex;
     justify-content: center;
     align-items: flex-end;
+    z-index: 2;
 }
 
-#character-image {
-    max-height: 95%;
-    max-width: 50%;
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-    opacity: 0;
+.character {
+    height: 90%;
+    object-fit: contain;
+    transition: opacity 0.5s, transform 0.5s;
+    opacity: 0.3;
+    transform: scale(1);
+    margin: 0 -5%;
 }
 
-/* --- テキストウィンドウ --- */
-#dialogue-box {
+.character.active {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+#ui-layer {
+    width: 100%;
+    height: 100%;
     position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+#textbox {
     width: 95%;
-    height: 150px;
-    background-color: var(--ui-bg-color);
-    border: 2px solid var(--accent-color);
+    height: 180px;
+    background: var(--ui-bg);
+    border: 3px solid var(--border-color);
+    margin: 0 auto 20px auto;
     padding: 20px;
     box-sizing: border-box;
-    /* もし画像を使う場合 */
-    /* background-image: url('images/dialogue_box.png'); */
-    /* background-size: 100% 100%; */
-    /* background-color: transparent; */
-    /* border: none; */
+    cursor: pointer;
 }
 
-#character-name {
-    background-color: var(--accent-color);
-    color: var(--main-bg-color);
+#char-name {
+    background-color: var(--accent-pink);
+    color: #000;
     font-weight: bold;
-    font-size: 22px;
-    padding: 5px 30px;
-    position: absolute;
-    top: -30px;
-    left: 20px;
+    font-size: 1.5rem;
+    padding: 5px 20px;
+    display: inline-block;
     transform: skewX(-15deg);
+    margin-bottom: 10px;
+    margin-left: -5px;
 }
 
-#dialogue-text {
-    font-size: 18px;
-    line-height: 1.6;
-    margin: 0;
+#message {
+    font-size: 1.2rem;
+    line-height: 1.8;
 }
 
-/* --- 演出用CSS --- */
-#chapter-title-layer {
+#choices-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.choice-button {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.8rem;
+    background: transparent;
+    border: 3px solid var(--accent-cyan);
+    color: var(--accent-cyan);
+    padding: 15px 50px;
+    margin: 15px 0;
+    cursor: pointer;
+    width: 70%;
+    text-align: center;
+    transform: skewX(-15deg);
+    transition: all 0.3s ease;
+}
+
+.choice-button:hover {
+    background: var(--accent-cyan);
+    color: #000;
+    box-shadow: 0 0 25px var(--accent-cyan);
+}
+
+/* 論破パート */
+#debate-screen {
+    background: #000;
+    color: var(--main-text);
+}
+
+.debate-ui {
+    text-align: center;
+}
+
+#debate-statement {
+    font-size: 1.5rem;
+    color: var(--accent-cyan);
+    margin: 40px 0;
+    padding: 20px;
+    border: 2px dashed var(--accent-cyan);
+}
+
+#debate-statement .contradiction {
+    color: var(--accent-pink);
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#evidence-list {
     display: flex;
     justify-content: center;
-    align-items: center;
-    background-color: rgba(0,0,0,0.7);
-    z-index: 100;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.5s, visibility 0.5s;
+    gap: 20px;
 }
 
-.show-chapter-title {
-    opacity: 1 !important;
-    visibility: visible !important;
+.evidence-item {
+    background-color: var(--ui-bg);
+    border: 2px solid var(--border-color);
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: all 0.3s;
 }
 
-/* ダンガンロンパ風グリッチエフェクト */
-.glitch {
-    font-size: 5rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    position: relative;
-    text-shadow: 0.05em 0 0 rgba(255, 0, 0, 0.75),
-               -0.025em -0.05em 0 rgba(0, 255, 0, 0.75),
-                0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
-    animation: glitch 500ms infinite;
+.evidence-item:hover, .evidence-item.selected {
+    background-color: var(--accent-pink);
+    color: #000;
 }
 
-.glitch:before,
-.glitch:after {
-    content: attr(data-text);
+#break-animation {
     position: absolute;
     top: 0;
     left: 0;
-    opacity: 0.8;
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 999;
 }
 
-.glitch:before {
-    animation: glitch-top 1s linear infinite;
-    clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+#break-animation img {
+    transform: scale(0);
+    animation: break-anim 0.5s forwards;
 }
 
-.glitch:after {
-    animation: glitch-bottom 1.5s linear infinite;
-    clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
-}
-
-@keyframes glitch {
-    2%,64% { transform: translate(2px,0) skew(0deg); }
-    4%,60% { transform: translate(-2px,0) skew(0deg); }
-    62% { transform: translate(0,0) skew(5deg); }
-}
-
-@keyframes glitch-top {
-    8%, 28%, 68%, 88% { transform: translate(-0.5px, 4px); }
-    18%, 48%, 58%, 98% { transform: translate(-1px, -4px); }
-}
-
-@keyframes glitch-bottom {
-    12%, 32%, 52%, 72%, 92% { transform: translate(1px, -4px); }
-    22%, 42%, 62%, 82% { transform: translate(-1px, 4px); }
+@keyframes break-anim {
+    0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+    70% { transform: scale(1.2) rotate(10deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
