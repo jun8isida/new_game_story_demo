@@ -9,20 +9,42 @@
 <body>
 
     <div id="game-container">
-        <div id="background-layer"></div>
-
-        <div id="character-layer">
-            <img id="character-image" src="" alt="">
+        <div id="title-screen" class="screen active">
+            <h1 class="glitch" data-text="×想いと偽りの境界線で×">×想いと偽りの境界線で×</h1>
+            <button id="start-button">GAME START</button>
         </div>
 
-        <div id="chapter-title-layer">
-            <h1 id="chapter-title" class="glitch" data-text=""></h1>
+        <div id="game-screen" class="screen">
+            <div id="background-layer"></div>
+            
+            <div id="character-layer">
+                <img id="char-left" class="character">
+                <img id="char-center" class="character">
+                <img id="char-right" class="character">
+            </div>
+
+            <div id="ui-layer">
+                <div id="textbox">
+                    <div id="char-name"></div>
+                    <div id="message"></div>
+                </div>
+
+                <div id="choices-box">
+                    </div>
+            </div>
         </div>
-        
-        <div id="dialogue-box">
-            <div id="character-name"></div>
-            <p id="dialogue-text"></p>
+
+        <div id="debate-screen" class="screen">
+             <div class="debate-ui">
+                <p>相手のセリフから矛盾を探し、証拠を突きつけろ！</p>
+                <div id="debate-statement"></div>
+                <div id="evidence-list"></div>
+                <div id="break-animation">
+                    <img src="images/break.png" alt="BREAK!">
+                </div>
+            </div>
         </div>
+
     </div>
 
     <script src="script.js"></script>
